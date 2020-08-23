@@ -15,9 +15,8 @@ class MailNotification(octoprint.plugin.StartupPlugin,
         self._settings.get(["url","AAAAAAAAAAAAAAAAA"])
 
     def get_template_vars(self):
-        return 
-            dict(url=self._settings.get(["smtp Mail server"]),
-                 urlBB=self._settings.get(["server Port"]))
+        return dict(url=self._settings.get(["smtp Mail server"],
+                    urlBB=self._settings.get(["server Port"])))
 
 __plugin_name__ = "MailNotification"
 __plugin_version__ = "1.0.0"
