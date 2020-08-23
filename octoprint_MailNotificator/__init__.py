@@ -18,9 +18,8 @@ class MailnotificatorPlugin(octoprint.plugin.SettingsPlugin,
 	##~~ SettingsPlugin mixin
 
 	def get_settings_defaults(self):
-		return dict(
-			# put your plugin's default settings here
-		)
+		return dict(url="eg: smtp.gmail.com",urlBB="eg: 465")
+		
 
 	##~~ AssetPlugin mixin
 
