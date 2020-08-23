@@ -14,7 +14,7 @@ class MailNotification(octoprint.plugin.StartupPlugin,
                ]
 
     def on_after_startup(self):
-        self._logger.info("Yow")
+        self._settings.get(["url","AAAAAAAAAAAAAAAAA"])
 
     def get_template_vars(self):
         return [
