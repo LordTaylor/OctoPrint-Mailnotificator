@@ -1,0 +1,4 @@
+include README.md
+recursive-include octoprint_MailNotificator/templates *
+recursive-include octoprint_MailNotificator/translations *
+recursive-include octoprint_MailNotificator/static *
