@@ -51,7 +51,7 @@ class MailnotificatorPlugin(octoprint.plugin.SettingsPlugin,
 		# for details.
 		return dict(
 			MailNotificator=dict(
-				displayName="Mail Notificator",
+				displayName="MailsNotificator",
 				displayVersion=self._plugin_version,
 
 				# version check: github repository
