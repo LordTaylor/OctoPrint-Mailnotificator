@@ -38,6 +38,11 @@ class MailnotificatorPlugin(octoprint.plugin.SettingsPlugin,
 			less=["less/MailNotificator.less"]
 		)
 
+	def get_template_configs(self):
+        return [
+        	dict(type="settings", custom_bindings=False)
+    	]
+
 	##~~ Softwareupdate hook
 
 	def get_update_information(self):
@@ -46,7 +51,7 @@ class MailnotificatorPlugin(octoprint.plugin.SettingsPlugin,
 		# for details.
 		return dict(
 			MailNotificator=dict(
-				displayName="MailNotificator",
+				displayName="Mail Notificator",
 				displayVersion=self._plugin_version,
 
 				# version check: github repository
