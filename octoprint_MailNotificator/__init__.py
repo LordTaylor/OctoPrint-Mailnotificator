@@ -19,12 +19,11 @@ class MailnotificatorPlugin(octoprint.plugin.SettingsPlugin,
 
 	def get_settings_defaults(self):
 		return dict(
-			url="eg: smtp.gmail.com",Mail_Port="eg: 465"
+			url="eg: smtp.gmail.com"
 		)
 
 	def get_template_vars(self):
-            return dict(Mail_Server=self._settings.get(["smtp Mail server"],
-                    Mail_Port=self._settings.get(["server Port"])))
+            return dict(url=self._settings.get(["smtp Mail server","server Port"])
 
 	##~~ AssetPlugin mixin
 
