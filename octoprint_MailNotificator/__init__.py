@@ -19,7 +19,7 @@ class MailnotificatorPlugin(octoprint.plugin.SettingsPlugin,
 
 
 	def on_print_progress(storage, path, progress):
-    		MailSender()
+    		progress
     		
 	def on_after_startup(self):
         	self._settings.get(["url"])
