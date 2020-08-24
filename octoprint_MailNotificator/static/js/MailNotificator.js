@@ -7,12 +7,19 @@
 $(function() {
     function MailnotificatorViewModel(parameters) {
         var self = this;
+        self.settings = parameters[0];
+
+        self.newUrl = ko.observable();
 
         // assign the injected parameters, e.g.:
         // self.loginStateViewModel = parameters[0];
         // self.settingsViewModel = parameters[1];
 
         // TODO: Implement your plugin's view model here.
+        self.onBeforeBinding = function() {
+            self.newUrl(self.settings.settings.plugins.helloworld.url());
+            self.goToUrl();
+        }
     }
 
     /* view model class, parameters for constructor, container to bind to
