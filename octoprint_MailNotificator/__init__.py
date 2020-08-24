@@ -15,12 +15,9 @@ import MailSender
 class MailnotificatorPlugin(octoprint.plugin.SettingsPlugin,
                             octoprint.plugin.AssetPlugin,
                             octoprint.plugin.TemplatePlugin,
-							octoprint.plugin.ProgressPlugin):
-
-
+							octoprint.plugin.EventHandlerPlugin):
 	# def on_print_progress(storage, path, progress):
     # 		progress
-    		
 	def on_after_startup(self):
         	self._settings.get(["url"])
 
