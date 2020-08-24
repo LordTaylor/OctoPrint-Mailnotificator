@@ -18,8 +18,8 @@ class MailnotificatorPlugin(octoprint.plugin.SettingsPlugin,
 							octoprint.plugin.EventHandlerPlugin):
 	# def on_print_progress(storage, path, progress):
     # 		progress
-	def on_after_startup(self):
-        	self._settings.get(["url"])
+	# def on_after_startup(self):
+    #     	self._settings.get(["url"])
 
 	##~~ SettingsPlugin mixin
 
@@ -38,10 +38,10 @@ class MailnotificatorPlugin(octoprint.plugin.SettingsPlugin,
 			less=["less/MailNotificator.less"]
 		)
 
-	def get_template_configs(self):
-			return [
-				dict(type="settings", custom_bindings=False)
-			]
+	# def get_template_configs(self):
+	# 		return [
+	# 			dict(type="settings", custom_bindings=False)
+	# 		]
 
 	##~~ Softwareupdate hook
 
