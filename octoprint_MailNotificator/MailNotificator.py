@@ -8,8 +8,8 @@ class MailNotification(octoprint.plugin.StartupPlugin,
                        octoprint.plugin.TemplatePlugin,
                        octoprint.plugin.SettingsPlugin):
 
-    # def get_settings_defaults(self):
-    #     return dict(Mail_Server="eg: smtp.gmail.com", Mail_Port="eg: 465")
+    def get_settings_defaults(self):
+        return dict(url="eg: smtp.gmail.com", Mail_Port="eg: 465")
 
     def on_after_startup(self):
         self._settings.get(["url", "AAAAAAAAAAAAAAAAA"])
