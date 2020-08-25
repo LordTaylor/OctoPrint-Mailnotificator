@@ -17,14 +17,12 @@ class MailnotificatorPlugin(octoprint.plugin.SettingsPlugin,
 							octoprint.plugin.StartupPlugin):
 
 	def on_after_startup(self):
-    		self._logger.info("Hello World!")						
+    		self._logger.info("Hello World! (more: %s)" % self._settings.get(["url"]))					
 
 	##~~ SettingsPlugin mixin
 
 	def get_settings_defaults(self):
-		return dict(
-			# put your plugin's default settings here
-		)
+		return dict(url="https://en.wikipedia.org/wiki/Hello_world")
 
 	##~~ AssetPlugin mixin
 
@@ -36,6 +34,9 @@ class MailnotificatorPlugin(octoprint.plugin.SettingsPlugin,
 			css=["css/MailNotificator.css"],
 			less=["less/MailNotificator.less"]
 		)
+	
+	def get_template_vars(self):
+    		return dict(url=self._settings.get(["url"]))
 
 	##~~ Softwareupdate hook
 
