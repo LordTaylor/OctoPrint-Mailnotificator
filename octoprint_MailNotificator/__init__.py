@@ -13,7 +13,11 @@ import octoprint.plugin
 
 class MailnotificatorPlugin(octoprint.plugin.SettingsPlugin,
                             octoprint.plugin.AssetPlugin,
-                            octoprint.plugin.TemplatePlugin):
+                            octoprint.plugin.TemplatePlugin,
+							octoprint.plugin.StartupPlugin):
+
+	def on_after_startup(self):
+    		self._logger.info("Hello World!")						
 
 	##~~ SettingsPlugin mixin
 
