@@ -27,7 +27,7 @@ $(function() {
         // gets called _after_ the settings have been retrieved from the OctoPrint backend and thus
         // the SettingsViewModel been properly populated.
         self.onBeforeBinding = function() {
-            self.newUrl(self.settings.settings.plugins.helloworld.url());
+            self.newUrl(self.settings.settings.plugins.MailNotificator.url());
             self.goToUrl();
         }
     }
