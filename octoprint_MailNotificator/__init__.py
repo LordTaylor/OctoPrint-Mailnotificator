@@ -36,7 +36,10 @@ class MailnotificatorPlugin(octoprint.plugin.SettingsPlugin,
 		)
 	
 	def get_template_vars(self):
-    		return dict(url=self._settings.get(["url"]))
+    	return [
+			dict(type="navbar", custom_bindings=False),
+			dict(type="settings", custom_bindings=False)
+		]
 
 	##~~ Softwareupdate hook
 
