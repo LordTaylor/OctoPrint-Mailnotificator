@@ -14,7 +14,7 @@ $(function() {
         self.currentUrl = ko.observable();
 
         // this will hold the URL entered in the text field
-        self.newUrl = ko.observable();
+        self.newUrl =  ko.observable();
 
         // this will be called when the user clicks the "Go" button and set the iframe's URL to
         // the entered URL
