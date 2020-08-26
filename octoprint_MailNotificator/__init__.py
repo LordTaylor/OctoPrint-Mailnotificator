@@ -22,18 +22,18 @@ class MailnotificatorPlugin(octoprint.plugin.SettingsPlugin,
 	##~~ SettingsPlugin mixin
 
 	def get_settings_defaults(self):
-			return dict(url="https://en.wikipedia.org/wiki/Hello_world")
+		return dict(url="https://en.wikipedia.org/wiki/Hello_world")
 
 	##~~ AssetPlugin mixin
 
 	def get_assets(self):
 		# Define your plugin's asset files to automatically include in the
 		# core UI here.
-			return dict(
-				js=["js/MailNotificator.js"],
-				css=["css/MailNotificator.css"],
-				less=["less/MailNotificator.less"]
-			)
+		return dict(
+			js=["js/MailNotificator.js"],
+			css=["css/MailNotificator.css"],
+			less=["less/MailNotificator.less"]
+		)
 	
 	def get_template_vars(self):
 			return [
