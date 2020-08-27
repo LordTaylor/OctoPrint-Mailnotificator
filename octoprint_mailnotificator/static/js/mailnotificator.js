@@ -41,6 +41,6 @@ $(function () {
         // ViewModels your plugin depends on, e.g. loginStateViewModel, settingsViewModel, ...
         dependencies: [ /* "loginStateViewModel",*/ "settingsViewModel"],
         // Elements to bind to, e.g. #settings_plugin_MailNotificator, #tab_plugin_MailNotificator, ...
-        elements: ["#tab_plugin_MailNotificator", "#settings_plugin_MailNotificator"]
+        elements: [/*"#tab_plugin_MailNotificator",*/ "#settings_plugin_MailNotificator"]
     });
 });
