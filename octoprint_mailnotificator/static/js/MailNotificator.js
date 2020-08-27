@@ -36,11 +36,11 @@ $(function () {
      * Please see http://docs.octoprint.org/en/master/plugins/viewmodels.html#registering-custom-viewmodels for more details
      * and a full list of the available options.
      */
-    OCTOPRINT_VIEWMODELS.push({
-        construct: MailnotificatorViewModel,
+    OCTOPRINT_VIEWMODELS.push([
+        MailnotificatorViewModel,
         // ViewModels your plugin depends on, e.g. loginStateViewModel, settingsViewModel, ...
         dependencies: [ /* "loginStateViewModel",*/ "settingsViewModel"],
         // Elements to bind to, e.g. #settings_plugin_MailNotificator, #tab_plugin_MailNotificator, ...
         elements: ["#tab_plugin_MailNotificator", "#settings_plugin_MailNotificator"]
-    });
+    ]);
 });
