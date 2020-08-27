@@ -4,7 +4,7 @@
  * Author: Jaroslaw Dominik Krawczyk
  * License: AGPLv3
  */
-$(function() {
+$(function () {
     function MailnotificatorViewModel(parameters) {
         var self = this;
 
@@ -14,11 +14,11 @@ $(function() {
         self.currentUrl = ko.observable();
 
         // this will hold the URL entered in the text field
-        self.newUrl =  ko.observable();
+        self.newUrl = ko.observable();
 
         // this will be called when the user clicks the "Go" button and set the iframe's URL to
         // the entered URL
-        self.goToUrl = function() {
+        self.goToUrl = function () {
             self.currentUrl(self.newUrl());
         };
 
@@ -26,8 +26,8 @@ $(function() {
         // dependencies have already been initialized. It is especially guaranteed that this method
         // gets called _after_ the settings have been retrieved from the OctoPrint backend and thus
         // the SettingsViewModel been properly populated.
-        self.onBeforeBinding = function() {
-            self.newUrl(self.settings.settings.plugins.MailNotificator.url());
+        self.onBeforeBinding = function () {
+            self.newUrl(self.settings.settings.plugins.mailnotificator.url());
             self.goToUrl();
         }
     }
@@ -39,8 +39,8 @@ $(function() {
     OCTOPRINT_VIEWMODELS.push({
         construct: MailnotificatorViewModel,
         // ViewModels your plugin depends on, e.g. loginStateViewModel, settingsViewModel, ...
-        dependencies: [ /* "loginStateViewModel", "settingsViewModel" */ ],
+        dependencies: [ /* "loginStateViewModel",*/ "settingsViewModel"],
         // Elements to bind to, e.g. #settings_plugin_MailNotificator, #tab_plugin_MailNotificator, ...
-        elements: [ /* ... */ ]
+        elements: ["#tab_plugin_MailNotificator", "#settings_plugin_MailNotificator"]
     });
 });

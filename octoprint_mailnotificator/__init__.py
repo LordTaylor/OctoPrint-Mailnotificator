@@ -30,7 +30,7 @@ class MailnotificatorPlugin(octoprint.plugin.SettingsPlugin,
 		# Define your plugin's asset files to automatically include in the
 		# core UI here.
 		return dict(
-			js=["js/MailNotificator.js"],
+			js=["js/mailnotificator.js"],
 			css=["css/MailNotificator.css"],
 			less=["less/MailNotificator.less"]
 		)
