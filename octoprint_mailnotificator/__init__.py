@@ -68,7 +68,7 @@ class MailnotificatorPlugin(octoprint.plugin.SettingsPlugin,
 			)
 		)
 
-	def on_print_progress(storage, path, progress):
+	def on_print_progress(self, storage, path, progress):
 
 
 # If you want your plugin to be registered within OctoPrint under a different name than what you defined in setup.py
