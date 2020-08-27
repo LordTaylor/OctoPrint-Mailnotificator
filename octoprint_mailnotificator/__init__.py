@@ -10,11 +10,13 @@ from __future__ import absolute_import
 # Take a look at the documentation on what other plugin mixins are available.
 
 import octoprint.plugin
+import octoprint_mailnotificator.MailSender
 
 class MailnotificatorPlugin(octoprint.plugin.SettingsPlugin,
                             octoprint.plugin.AssetPlugin,
                             octoprint.plugin.TemplatePlugin,
-							octoprint.plugin.StartupPlugin):
+							octoprint.plugin.StartupPlugin,
+							octoprint.plugin.ProgressPlugin):
 
 	def on_after_startup(self):
     		self._logger.info("Hello World! (more: %s)" % self._settings.get(["url"]))					
@@ -65,6 +67,8 @@ class MailnotificatorPlugin(octoprint.plugin.SettingsPlugin,
 				pip="https://github.com/LordTaylor/OctoPrint-Mailnotificator/archive/{target_version}.zip"
 			)
 		)
+
+	def on_print_progress(storage, path, progress):
 
 
 # If you want your plugin to be registered within OctoPrint under a different name than what you defined in setup.py
