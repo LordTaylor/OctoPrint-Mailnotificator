@@ -256,7 +256,7 @@ class MailnotificatorPlugin(octoprint.plugin.EventHandlerPlugin,
             message = tmpConfig["message"].format(**data)
         except KeyError as error:
             message = tmpConfig["message"] + \
-                """\r\n:sos: **Octotweet Warning**""" + \
+                """\r\n:sos: **mailnotificator Warning**""" + \
                 """\r\n The variable `{""" + error.args[0] + """}` is invalid for this message: """ + \
                 """\r\n Available variables: `{""" + \
                 '}`, `{'.join(list(data)) + "}`"
