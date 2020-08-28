@@ -161,9 +161,6 @@ class MailnotificatorPlugin(octoprint.plugin.EventHandlerPlugin,
 			)
 		)
 
-	def on_print_progress(self, storage, path, progress):
-    		MailSender().send_Mail()
-
 	def on_event(self, event, payload):
 		
 			if event == "Startup":
@@ -224,10 +221,10 @@ class MailnotificatorPlugin(octoprint.plugin.EventHandlerPlugin,
 
 			tmpConfig = self._settings.get(["events", eventID], merged=True)
 
-			if tmpConfig["enabled"] != True:
-				self._logger.debug(
-					"Event {} is not enabled. Returning gracefully".format(eventID))
-				return False
+			# if tmpConfig["enabled"] != True:
+			# 	self._logger.debug(
+			# 		"Event {} is not enabled. Returning gracefully".format(eventID))
+			# 	return False
 
 			# Special case for progress eventID : we check for progress and steps
 			if eventID == 'printing_progress' and (
@@ -254,12 +251,12 @@ class MailnotificatorPlugin(octoprint.plugin.EventHandlerPlugin,
 				message = tmpConfig["message"].format(**data)
 			except KeyError as error:
 				message = tmpConfig["message"] + \
-					"""\r\n:sos: **Octotweet Warning**""" + \
+					"""\r\n:sos: **mailnotificator Warning**""" + \
 					"""\r\n The variable `{""" + error.args[0] + """}` is invalid for this message: """ + \
 					"""\r\n Available variables: `{""" + \
 					'}`, `{'.join(list(data)) + "}`"
 			finally:
-				return self.send_message(eventID, message, tmpConfig["with_snapshot"])
+				return MailSender().send_Mail()
 			
 
 
