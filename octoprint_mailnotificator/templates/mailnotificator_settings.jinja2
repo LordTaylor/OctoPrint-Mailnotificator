@@ -6,43 +6,27 @@
             <input type="checkbox" data-bind="checked: settings.plugins.mailnotificator.activated">
         </div>
     </div>
+
     <div class="control-group">
-        <label class="control-label">{{ _('API Key') }}</label>
+        <label class="control-label">{{ _('Host SMTP address') }}</label>
         <div class="controls">
-            <input type="text" class="input-block-level" data-bind="value: settings.plugins.mailnotificator.consumer_key">
+            <input type="text" class="input-block-level" data-bind="value: settings.plugins.mailnotificator.host_smtp">
         </div>
     </div>
     <div class="control-group">
-        <label class="control-label">{{ _('API Key Secret') }}</label>
+        <label class="control-label">{{ _('Your Mail Address') }}</label>
         <div class="controls">
-            <input type="text" class="input-block-level" data-bind="value: settings.plugins.mailnotificator.consumer_secret">
+            <input type="text" class="input-block-level" data-bind="value: settings.plugins.mailnotificator.user_email">
         </div>
     </div>
-    <div class="control-group">
-        <label class="control-label">{{ _('Acces Token') }}</label>
-        <div class="controls">
-            <input type="text" class="input-block-level" data-bind="value: settings.plugins.mailnotificator.access_token">
-        </div>
-    </div>
-    <div class="control-group">
-        <label class="control-label">{{ _('Acces Token Secret') }}</label>
-        <div class="controls">
-            <input type="text" class="input-block-level" data-bind="value: settings.plugins.mailnotificator.access_token_secret">
-        </div>
-    </div>
-    <div class="control-group">
-        <label class="control-label">{{ _('Username') }}</label>
-        <div class="controls">
-            <input type="text" class="input-block-level" data-bind="value: settings.plugins.mailnotificator.username">
-        </div>
-    </div>
+
      <div class="control-group">
-        <label class="control-label">{{ _('Hashtags') }}</label>
+        <label class="control-label">{{ _('wher send mail') }}</label>
         <div class="controls">
-            <input type="text" class="input-block-level" data-bind="value: settings.plugins.mailnotificator.hashtags">
+            <input type="text" class="input-block-level" data-bind="value: settings.plugins.mailnotificator.mail_to_send">
         </div>                                                                                                                                                                                                                                   </div>                                                                                                                                                                                                                        
     <div style="clear:both">
-        <small>{{ _("If you modify these settings, a test message will be sent to Twitter.") }}</small>
+        <small>{{ _("something something") }}</small>
     </div>
 </form>
 <h3>{{ _('Messages settings') }}</h3>

@@ -12,11 +12,95 @@ from __future__ import absolute_import
 import octoprint.plugin
 import octoprint_mailnotificator.MailSender
 
-class MailnotificatorPlugin(octoprint.plugin.SettingsPlugin,
+class MailnotificatorPlugin(octoprint.plugin.EventHandlerPlugin,
+							octoprint.plugin.SettingsPlugin,
                             octoprint.plugin.AssetPlugin,
                             octoprint.plugin.TemplatePlugin,
 							octoprint.plugin.StartupPlugin,
 							octoprint.plugin.ProgressPlugin):
+	def __init__(self):
+        # Events definition here (better for intellisense in IDE)
+        # referenced in the settings too.
+		self.events = {
+            "startup": {
+                "name": "Octoprint Startup",
+                "enabled": True,
+                "with_snapshot": False,
+                        "message": "⏰ I just woke up! What are we gonna print today?"
+            },
+            "shutdown": {
+                "name": "Octoprint Shutdown",
+                "enabled": True,
+                "with_snapshot": False,
+                        "message": "💤 Going to bed now!"
+            },
+            "printer_state_operational": {
+                "name": "Printer state : operational",
+                "enabled": True,
+                "with_snapshot": False,
+                        "message": "✅ Your printer is operational."
+            },
+            "printer_state_error": {
+                "name": "Printer state : error",
+                "enabled": True,
+                "with_snapshot": False,
+                        "message": "⚠️ Your printer is in an erroneous state."
+            },
+            "printer_state_unknown": {
+                "name": "Printer state : unknown",
+                "enabled": True,
+                "with_snapshot": False,
+                        "message": "❔ Your printer is in an unknown state."
+            },
+            "printing_started": {
+                "name": "Printing process : started",
+                "enabled": True,
+                "with_snapshot": True,
+                        "message": "🖨️ I've started printing **{name}**"
+            },
+            "printing_paused": {
+                "name": "Printing process : paused",
+                "enabled": True,
+                "with_snapshot": True,
+                        "message": "⏸️ The printing was paused."
+            },
+            "printing_resumed": {
+                "name": "Printing process : resumed",
+                "enabled": True,
+                "with_snapshot": True,
+                        "message": "▶️ The printing was resumed."
+            },
+            "printing_cancelled": {
+                "name": "Printing process : cancelled",
+                "enabled": True,
+                "with_snapshot": True,
+                        "message": "🛑 The printing was stopped."
+            },
+            "printing_done": {
+                "name": "Printing process : done",
+                "enabled": True,
+                "with_snapshot": True,
+                        "message": "👍 Printing is done! Took about {time_formatted}"
+            },
+            "printing_failed": {
+                "name": "Printing process : failed",
+                "enabled": True,
+                "with_snapshot": True,
+                        "message": "👎 Printing has failed! :("
+            },
+            "printing_progress": {
+                "name": "Printing progress",
+                "enabled": True,
+                "with_snapshot": True,
+                        "message": "📢 Printing is at {progress}%",
+                        "step": 10
+            },
+            "test": {  # Not a real message, but we will treat it as one
+                "enabled": True,
+                "with_snapshot": True,
+                "message": "Hello hello! If you see this message, it means that the settings are correct!"
+            },
+        }
 
 	def on_after_startup(self):
     		self._logger.info("Hello World! (more: %s)" % self._settings.get(["url"]))					
@@ -24,7 +108,17 @@ class MailnotificatorPlugin(octoprint.plugin.SettingsPlugin,
 	##~~ SettingsPlugin mixin
 
 	def get_settings_defaults(self):
-		return dict(url="https://en.wikipedia.org/wiki/Hello_world")
+		return {
+            'consumer_key': "",
+            'host_smtp': "",
+            'user_email': "",
+            'mail_to_send': "",
+            'username': "",
+            'events': self.events,
+            'allow_scripts': False,
+            'script_before': '',
+            'script_after': ''
+        }
 
 	##~~ AssetPlugin mixin
 
@@ -39,7 +133,6 @@ class MailnotificatorPlugin(octoprint.plugin.SettingsPlugin,
 	
 	def get_template_configs(self):
 			return [
-				dict(type="navbar", custom_bindings=False),
 				dict(type="settings", custom_bindings=False)
 			]
 	# def get_template_vars(self):
