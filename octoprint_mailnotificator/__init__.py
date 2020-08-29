@@ -132,9 +132,8 @@ class MailnotificatorPlugin(octoprint.plugin.EventHandlerPlugin,
 		)
 	
 	def get_template_configs(self):
-			return [
-				dict(type="settings", custom_bindings=False)
-			]
+			return dict(type="settings", custom_bindings=False)
+			
 	# def get_template_vars(self):
     #     	return dict(url=self._settings.get(["url"]))
 	# 		#
