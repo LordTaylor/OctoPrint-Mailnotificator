@@ -10,7 +10,15 @@ from __future__ import absolute_import
 # Take a look at the documentation on what other plugin mixins are available.
 
 import octoprint.plugin
-import octoprint_mailnotificator.MailSender
+import octoprint.settings
+import octoprint.filemanager
+import requests
+from datetime import timedelta
+from PIL import Image
+from io import BytesIO
+import subprocess
+import os
+import octoprint_mailnotificator.mailsender as mailsender
 
 class MailnotificatorPlugin(octoprint.plugin.EventHandlerPlugin,
 							octoprint.plugin.SettingsPlugin,
@@ -22,17 +30,11 @@ class MailnotificatorPlugin(octoprint.plugin.EventHandlerPlugin,
         # Events definition here (better for intellisense in IDE)
         # referenced in the settings too.
 		self.events = {
-            "startup": {
-                "name": "Octoprint Startup",
-                "enabled": True,
-                "with_snapshot": False,
-                        "message": "⏰ I just woke up! What are we gonna print today?"
-            },
             "shutdown": {
                 "name": "Octoprint Shutdown",
                 "enabled": True,
                 "with_snapshot": False,
-                        "message": "💤 Going to bed now!"
+                        "message": "printer is shut down"
             },
             "printer_state_operational": {
                 "name": "Printer state : operational",
@@ -46,12 +48,6 @@ class MailnotificatorPlugin(octoprint.plugin.EventHandlerPlugin,
                 "with_snapshot": False,
                         "message": "⚠️ Your printer is in an erroneous state."
             },
-            "printer_state_unknown": {
-                "name": "Printer state : unknown",
-                "enabled": True,
-                "with_snapshot": False,
-                        "message": "❔ Your printer is in an unknown state."
-            },
             "printing_started": {
                 "name": "Printing process : started",
                 "enabled": True,
@@ -62,31 +58,31 @@ class MailnotificatorPlugin(octoprint.plugin.EventHandlerPlugin,
                 "name": "Printing process : paused",
                 "enabled": True,
                 "with_snapshot": True,
-                        "message": "⏸️ The printing was paused."
+                        "message": "The printing was paused."
             },
             "printing_resumed": {
                 "name": "Printing process : resumed",
                 "enabled": True,
                 "with_snapshot": True,
-                        "message": "▶️ The printing was resumed."
+                        "message": "The printing was resumed."
             },
             "printing_cancelled": {
                 "name": "Printing process : cancelled",
                 "enabled": True,
                 "with_snapshot": True,
-                        "message": "🛑 The printing was stopped."
+                        "message": "The printing was stopped."
             },
             "printing_done": {
                 "name": "Printing process : done",
                 "enabled": True,
                 "with_snapshot": True,
-                        "message": "👍 Printing is done! Took about {time_formatted}"
+                        "message": "Printing is done! Took about {time_formatted}"
             },
             "printing_failed": {
                 "name": "Printing process : failed",
                 "enabled": True,
                 "with_snapshot": True,
-                        "message": "👎 Printing has failed! :("
+                        "message": "Printing has failed!"
             },
             "printing_progress": {
                 "name": "Printing progress",
@@ -94,30 +90,19 @@ class MailnotificatorPlugin(octoprint.plugin.EventHandlerPlugin,
                 "with_snapshot": True,
                         "message": "📢 Printing is at {progress}%",
                         "step": 10
-            },
-            "test": {  # Not a real message, but we will treat it as one
-                "enabled": True,
-                "with_snapshot": True,
-                "message": "Hello hello! If you see this message, it means that the settings are correct!"
-            },
-        }
-
-	def on_after_startup(self):
-    		self._logger.info("Hello World! (more: %s)" % self._settings.get(["url"]))					
+            }
+        }				
 
 	##~~ SettingsPlugin mixin
 
 	def get_settings_defaults(self):
 		return {
-            'consumer_key': "",
+            'password': "",
             'host_smtp': "",
             'user_email': "",
             'mail_to_send': "",
-            'username': "",
-            'events': self.events,
-            'allow_scripts': False,
-            'script_before': '',
-            'script_after': ''
+            'printer_name': "",
+            'events': self.events
         }
 
 	##~~ AssetPlugin mixin
@@ -133,10 +118,6 @@ class MailnotificatorPlugin(octoprint.plugin.EventHandlerPlugin,
 	
 	def get_template_configs(self):
 			return dict(type="settings", custom_bindings=False)
-			
-	# def get_template_vars(self):
-    #     	return dict(url=self._settings.get(["url"]))
-	# 		#
 
 	##~~ Softwareupdate hook
 
@@ -161,69 +142,103 @@ class MailnotificatorPlugin(octoprint.plugin.EventHandlerPlugin,
 		)
 
 	def on_event(self, event, payload):
-		
-			if event == "Startup":
-				return self.notify_event("startup")
-
 			if event == "Shutdown":
-				return self.notify_event("shutdown")
+				return self.send_Mail("Shutdown")
 
 			if event == "PrinterStateChanged":
 				if payload["state_id"] == "OPERATIONAL":
-					return self.notify_event("printer_state_operational")
+					return self.send_Mail("printer_state_operational")
 				elif payload["state_id"] == "ERROR":
-					return self.notify_event("printer_state_error")
+					return self.send_Mail("printer_state_error")
 				elif payload["state_id"] == "UNKNOWN":
-					return self.notify_event("printer_state_unknown")
+					return self.send_Mail("printer_state_unknown")
 
 			if event == "PrintStarted":
-				return self.notify_event("printing_started", payload)
+				return self.send_Mail("printing_started", payload)
 			if event == "PrintPaused":
-				return self.notify_event("printing_paused", payload)
+				return self.send_Mail("printing_paused", payload)
 			if event == "PrintResumed":
-				return self.notify_event("printing_resumed", payload)
+				return self.send_Mail("printing_resumed", payload)
 			if event == "PrintCancelled":
-				return self.notify_event("printing_cancelled", payload)
+				return self.send_Mail("printing_cancelled", payload)
 
 			if event == "PrintDone":
 				payload['time_formatted'] = str(
 					timedelta(seconds=int(payload["time"])))
-				return self.notify_event("printing_done", payload)
+				return self.send_Mail("printing_done", payload)
 
 			return True
 
 	def on_print_progress(self, location, path, progress):
 			self.notify_event("printing_progress", {"progress": progress})
 
-	def on_settings_save(self, data):
-			old_bot_settings = '{}{}{}'.format(
-				self._settings.get(['url'], merged=True),
-				self._settings.get(['avatar'], merged=True),
-				self._settings.get(['username'], merged=True)
-			)
-			octoprint.plugin.SettingsPlugin.on_settings_save(self, data)
-			new_bot_settings = '{}{}{}'.format(
-				self._settings.get(['url'], merged=True),
-				self._settings.get(['avatar'], merged=True),
-				self._settings.get(['username'], merged=True)
-			)
-
-			if(old_bot_settings != new_bot_settings):
-				self._logger.info("Settings have changed. Send a test message...")
-				self.notify_event("test")
-
-	def notify_event(self, eventID, data={}):
+	def send_Mail(self, eventID, data={}):
 			if(eventID not in self.events):
 				self._logger.error(
 					"Tried to notifiy on inexistant eventID : ", eventID)
 				return False
-
+			
 			tmpConfig = self._settings.get(["events", eventID], merged=True)
 
-			# if tmpConfig["enabled"] != True:
-			# 	self._logger.debug(
-			# 		"Event {} is not enabled. Returning gracefully".format(eventID))
-			# 	return False
+			if tmpConfig["enabled"] != True:
+				self._logger.debug(
+					"Event {} is not enabled. Returning gracefully".format(eventID))
+				return False
+			
+			 # Get snapshot if asked for
+			withSnapshot =tmpConfig["with_snapshot"]
+			snapshot = None
+			snapshotUrl = self._settings.global_get(["webcam", "snapshot"])
+			if withSnapshot and snapshotUrl is not None and "http" in snapshotUrl:
+				try:
+					snapshotCall = requests.get(snapshotUrl)
+
+					# Get the settings used for streaming to know if we should transform the snapshot
+					mustFlipH = self._settings.global_get_boolean(
+						["webcam", "flipH"])
+					mustFlipV = self._settings.global_get_boolean(
+						["webcam", "flipV"])
+					mustRotate = self._settings.global_get_boolean(
+						["webcam", "rotate90"])
+
+					# Only do something if we got the snapshot
+					if snapshotCall:
+						snapshotImage = BytesIO(snapshotCall.content)
+
+						# Only call Pillow if we need to transpose anything
+						if (mustFlipH or mustFlipV or mustRotate):
+							img = Image.open(snapshotImage)
+
+							self._logger.info("Transformations : FlipH={}, FlipV={} Rotate={}".format(
+								mustFlipH, mustFlipV, mustRotate))
+
+							if mustFlipH:
+								img = img.transpose(Image.FLIP_LEFT_RIGHT)
+
+							if mustFlipV:
+								img = img.transpose(Image.FLIP_TOP_BOTTOM)
+
+							if mustRotate:
+								img = img.transpose(Image.ROTATE_90)
+
+							newImage = BytesIO()
+							img.save(newImage, 'jpg')
+
+							snapshotImage = newImage
+
+						snapshot = {
+							'file': ("snapshot.jpg", snapshotImage.getvalue())}
+						img = Image.open(snapshotImage)
+						file_name = self.get_plugin_data_folder() + "/image.png"
+						img.save(file_name)
+				except requests.ConnectionError:
+					snapshot = None
+					self._logger.error(
+						"{}: ConnectionError on: '{}'".format(eventID, snapshotUrl))
+				except requests.ConnectTimeout:
+					snapshot = None
+					self._logger.error(
+						"{}: ConnectTimeout on: '{}'".format(eventID, snapshotUrl))
 
 			# Special case for progress eventID : we check for progress and steps
 			if eventID == 'printing_progress' and (
@@ -255,7 +270,13 @@ class MailnotificatorPlugin(octoprint.plugin.EventHandlerPlugin,
 					"""\r\n Available variables: `{""" + \
 					'}`, `{'.join(list(data)) + "}`"
 			finally:
-				return MailSender().send_Mail()
+				user = self._settings.get("user_email")
+				mail_to = self._settings.get("user_email")
+				subject = "Octoprint Status"
+				text = message
+				server = "host_smtp"
+				password = "password"
+				return mailsender.send_mail(user,password,mail_to,subject,text,)
 			
 
 
