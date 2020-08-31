@@ -117,7 +117,7 @@ class MailnotificatorPlugin(octoprint.plugin.EventHandlerPlugin,
 		)
 	
 	def get_template_configs(self):
-			return dict(type="settings", custom_bindings=False)
+		return dict(type="settings", custom_bindings=False)
 
 	##~~ Softwareupdate hook
 
